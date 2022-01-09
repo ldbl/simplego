@@ -21,7 +21,7 @@ jobs:
       image_resource:
         type: registry-image
         source:
-          repository: vito/oci-build-task
+          repository: rdclda/concourse-oci-build-task
       inputs:
       - name: context
         path: .
@@ -63,3 +63,8 @@ resources:
     repository: ldbl/ci-tools
     username: ((docker_username))
     password: ((docker_password))
+
+image_resource:
+  type: registry-image
+  source:
+    repository: rdclda/concourse-oci-build-task
