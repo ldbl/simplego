@@ -1,0 +1,65 @@
+### Jobs
+jobs:
+- name: build-and-push-docker-image #Build and push the image job
+  plan:
+  - get: ci-tools
+  - get: simplego-source-code 
+    trigger: true
+  - task: add-docker-image-tags  
+    image: ci-tools
+    file: ci-tools/rootfs/ci-tasks/add-additional-docker-tags.yaml
+    params: 
+      TAG: master
+      ADDITIONAL_TAGS: UTC_DATETIME
+      UTC_DATETIME_FORMAT: "%Y%m%d%H%M%S"
+    input_mapping: 
+      repo: simplego-source-code
+  - task: build-simplego ### Build docker image
+    privileged: true
+    config:
+      platform: linux
+      image_resource:
+        type: registry-image
+        source:
+          repository: vito/oci-build-task
+      inputs:
+      - name: context
+        path: .
+      outputs:
+      - name: image
+      run:
+        path: build
+      params:
+        CONTEXT: .
+      #caches:
+      #  - path: cache
+    input_mapping:
+      context: simplego-source-code 
+  - put: simplego-docker-image 
+    params: 
+      image: image/image.tar
+      additional_tags: tags/additional_tags
+
+### Resources
+resources:
+- name: simplego-source-code
+  type: git
+  source:
+    uri: git@github.com:ldbl/simplego.git
+    branch: master
+    
+
+- name: twelvefactor-docker-image
+  type: registry-image
+  source:
+    repository: ldbl/simplego
+    username: ((docker_username))
+    password: ((docker_password))
+    tag: latest
+
+- name: ci-tools
+  type: registry-image
+  source:
+    repository: ldbl/ci-tools
+    username: ((docker_username))
+    password: ((docker_password))
