@@ -1,5 +1,4 @@
-FROM golang:alpine3.15
-RUN mkdir /app
+FROM golang:buster
 ADD . /app
 WORKDIR /app
 RUN go build -o main main.go

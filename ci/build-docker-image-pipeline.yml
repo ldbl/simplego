@@ -45,11 +45,11 @@ resources:
 - name: simplego-source-code
   type: git
   source:
-    uri: git@github.com:ldbl/simplego.git
-    branch: master
+    uri: https://github.com/ldbl/simplego.git
+    branch: main
     
 
-- name: twelvefactor-docker-image
+- name: simplego-docker-image
   type: registry-image
   source:
     repository: ldbl/simplego
